@@ -1,9 +1,9 @@
-from ota_updater import OTAUpdater
+import ota_updater as ota_up
 from config import GITHUB_URL, WIFI_SSID, WIFI_PW, UPDATE_CHECK_DELAY
 import time
 
 def download_and_install_update_if_available():
-    ota_updater = OTAUpdater(GITHUB_URL)
+    ota_updater = ota_up.OTAUpdater(GITHUB_URL)
     ota_updater.download_and_install_update_if_available(WIFI_SSID, WIFI_PW)
 
 def start():
@@ -78,9 +78,9 @@ def start():
         s.setblocking(False)
         time.sleep (30)
 
-def boot():
+def main():
     download_and_install_update_if_available()
     start()
 
 
-boot()
+main()
