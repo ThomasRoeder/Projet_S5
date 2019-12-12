@@ -1,9 +1,10 @@
 from ota_updater import OTAUpdater
-
+from config import GITHUB_URL, WIFI_SSID, WIFI_PW, UPDATE_CHECK_DELAY
+import time
 
 def download_and_install_update_if_available():
-    ota_updater = OTAUpdater('url-to-your-github-project')
-    ota_updater.download_and_install_update_if_available('wifi-ssid', 'wifi-password')
+    ota_updater = OTAUpdater(GITHUB_URL)
+    ota_updater.download_and_install_update_if_available(WIFI_SSID, WIFI_PW)
 
 def start():
     from network import LoRa
@@ -39,7 +40,7 @@ def start():
     s.setsockopt(socket.SOL_LORA, socket.SO_DR, 5)
     s.setsockopt(socket.SOL_LORA,  socket.SO_CONFIRMED,  False)
 
-    # timestamp = time.now()
+    timestamp = time.time()
 
     while True:
         # Turn the light red
@@ -69,8 +70,10 @@ def start():
             # Turn the light off
             pycom.rgbled(0x000000)
 
-        # if time.now() - timestamp > 1 heure :
-        #   ota_updater.check_for_update_to_install_during_next_reboot()
+        # regularly check for a new update
+        if time.time() - timestamp > UPDATE_CHECK_DELAY :
+            ota_updater.check_for_update_to_install_during_next_reboot()
+            timestamp = time.time()
 
         s.setblocking(False)
         time.sleep (30)
