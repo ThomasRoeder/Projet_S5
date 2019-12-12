@@ -13,9 +13,9 @@ def start():
     import binascii
     import pycom
 
-    # Turn the light white
+    # Turn the light blue
     pycom.heartbeat(False)
-    pycom.rgbled(0x111111)
+    pycom.rgbled(0x000011)
 
     # Initialise LoRa in LORAWAN mode.
     lora = LoRa(mode=LoRa.LORAWAN)
@@ -43,8 +43,8 @@ def start():
     timestamp = time.time()
 
     while True:
-        # Turn the light red
-        pycom.rgbled(0x110000)
+        # Turn the light green
+        pycom.rgbled(0x001100)
 
         s.setblocking(True)
         s.settimeout(10)
@@ -57,14 +57,14 @@ def start():
             # ************************
         except:
             print ('timeout in sending')
-        # Turn the light green
-        pycom.rgbled(0x001100)
+        # Turn the light red
+        pycom.rgbled(0x110000)
 
         try:
             data = s.recv(64)
             print(data)
-            # Turn the light blue
-            pycom.rgbled(0x000011)
+            # Turn the light white
+            pycom.rgbled(0x111111)
         except:
             print ('nothing received')
             # Turn the light off
