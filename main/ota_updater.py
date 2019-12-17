@@ -278,3 +278,6 @@ class HttpClient:
 
     def delete(self, url, **kw):
         return self.request('DELETE', url, **kw)
+
+if (__name__=="__main__"):
+    print("yes")
