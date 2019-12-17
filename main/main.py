@@ -1,12 +1,11 @@
-from ota_updater import OTAUpdater
+import ota_updater
 from config import GITHUB_URL, WIFI_SSID, WIFI_PW, UPDATE_CHECK_DELAY
 import time
 
-def download_and_install_update_if_available():
-    ota_updater = OTAUpdater(GITHUB_URL)
-    ota_updater.download_and_install_update_if_available(WIFI_SSID, WIFI_PW)
+def download_and_install_update_if_available(my_ota_updater):
+    my_ota_updater.download_and_install_update_if_available(WIFI_SSID, WIFI_PW)
 
-def start():
+def start(my_ota_updater):
     from network import LoRa
     import socket
     import time
@@ -29,16 +28,16 @@ def start():
     lora.join(activation=LoRa.OTAA, auth=(app_eui, app_key),  timeout=0)
 
     # wait until the module has joined the network
-    while not lora.has_joined():
-        time.sleep(2.5)
-        print('Not yet joined...')
+        # while not lora.has_joined():
+        #     time.sleep(2.5)
+        #     print('Not yet joined...')
 
     # create a LoRa socket
-    s = socket.socket(socket.AF_LORA, socket.SOCK_RAW)
-    #s.bind(5)
-    # set the LoRaWAN data rate
-    s.setsockopt(socket.SOL_LORA, socket.SO_DR, 5)
-    s.setsockopt(socket.SOL_LORA,  socket.SO_CONFIRMED,  False)
+    # s = socket.socket(socket.AF_LORA, socket.SOCK_RAW)
+    # #s.bind(5)
+    # # set the LoRaWAN data rate
+    # s.setsockopt(socket.SOL_LORA, socket.SO_DR, 5)
+    # s.setsockopt(socket.SOL_LORA,  socket.SO_CONFIRMED,  False)
 
     timestamp = time.time()
 
@@ -46,41 +45,46 @@ def start():
         # Turn the light green
         pycom.rgbled(0x001100)
 
-        s.setblocking(True)
-        s.settimeout(10)
+        # s.setblocking(True)
+        # s.settimeout(10)
 
         # for testing new code, remove try/except
 
-        try:
-            s.send('Hello LoRa')
+        # try:
+        #     s.send('Hello LoRa')
             # send the data from the sensor
             # ************************
-        except:
-            print ('timeout in sending')
+        # except:
+        #     print ('timeout in sending')
         # Turn the light red
-        pycom.rgbled(0x110000)
-
-        try:
-            data = s.recv(64)
-            print(data)
-            # Turn the light white
-            pycom.rgbled(0x111111)
-        except:
-            print ('nothing received')
-            # Turn the light off
-            pycom.rgbled(0x000000)
+        # pycom.rgbled(0x110000)
+        #
+        # try:
+        #     data = s.recv(64)
+        #     print(data)
+        #     # Turn the light white
+        #     pycom.rgbled(0x111111)
+        # except:
+        #     print ('nothing received')
+        #     # Turn the light off
+        #     pycom.rgbled(0x000000)
 
         # regularly check for a new update
+        print("pre if")
         if time.time() - timestamp > UPDATE_CHECK_DELAY :
-            ota_updater.check_for_update_to_install_during_next_reboot()
+            print("if 1")
+            my_ota_updater.check_for_update_to_install_during_next_reboot(WIFI_SSID, WIFI_PW)
+            print("if 2")
             timestamp = time.time()
+            print("if 3")
 
-        s.setblocking(False)
-        time.sleep (30)
+        # s.setblocking(False)
+        print("sleep")
+        time.sleep (10)
 
 def boot():
-    download_and_install_update_if_available()
-    start()
-
+    my_ota_updater = ota_updater.OTAUpdater(GITHUB_URL, main_dir='.')
+    download_and_install_update_if_available(my_ota_updater)
+    start(my_ota_updater)
 
 boot()

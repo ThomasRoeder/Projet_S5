@@ -5,6 +5,7 @@ import usocket
 import os
 import gc
 import machine
+import network
 
 
 class OTAUpdater:
@@ -17,7 +18,6 @@ class OTAUpdater:
 
     @staticmethod
     def using_network(ssid, password):
-        import network
         sta_if = network.WLAN(network.STA_IF)
         if not sta_if.isconnected():
             print('connecting to network...')
@@ -27,8 +27,10 @@ class OTAUpdater:
                 pass
         print('network config:', sta_if.ifconfig())
 
-    def check_for_update_to_install_during_next_reboot(self):
+    def check_for_update_to_install_during_next_reboot(self, ssid, password):
+        OTAUpdater.using_network(ssid, password)
         current_version = self.get_version(self.modulepath(self.main_dir))
+        print("current_version : ", current_version)
         latest_version = self.get_latest_version()
 
         print('Checking version... ')
@@ -102,7 +104,9 @@ class OTAUpdater:
                 os.remove(directory + '/' + entry[0])
         os.rmdir(directory)
 
-    def get_version(self, directory, version_file_name='.version'):
+    def get_version(self, directory, version_file_name='version.py'):
+        print(os.listdir(directory))
+        print("file : ", directory + '/' + version_file_name)
         if version_file_name in os.listdir(directory):
             f = open(directory + '/' + version_file_name)
             version = f.read()
@@ -111,6 +115,7 @@ class OTAUpdater:
         return '0.0'
 
     def get_latest_version(self):
+        print(self.github_repo  + '/releases/latest')
         latest_release = self.http_client.get(self.github_repo + '/releases/latest')
         version = latest_release.json()['tag_name']
         latest_release.close()
@@ -197,7 +202,7 @@ class HttpClient:
             host, port = host.split(':', 1)
             port = int(port)
 
-        ai = usocket.getaddrinfo(host, port, 0, usocket.SOCK_STREAM)
+        ai = usocket.getaddrinfo(host, port) #, 0, usocket.SOCK_STREAM)
         ai = ai[0]
 
         s = usocket.socket(ai[0], ai[1], ai[2])
