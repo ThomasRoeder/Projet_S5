@@ -5,7 +5,7 @@ import usocket
 import os
 import gc
 import machine
-import network
+from network import WLAN
 
 
 class OTAUpdater:
@@ -18,14 +18,23 @@ class OTAUpdater:
 
     @staticmethod
     def using_network(ssid, password):
-        sta_if = network.WLAN(network.STA_IF)
-        if not sta_if.isconnected():
-            print('connecting to network...')
-            sta_if.active(True)
-            sta_if.connect(ssid, password)
-            while not sta_if.isconnected():
-                pass
-        print('network config:', sta_if.ifconfig())
+        wlan = WLAN(mode=WLAN.STA)
+        nets = wlan.scan()
+        for net in nets:
+            if net.ssid == ssid:
+                print('Network found!')
+                wlan.connect(net.ssid, auth=(net.sec, password), timeout=5000)
+                while not wlan.isconnected():
+                    machine.idle() # save power while waiting
+                print('WLAN connection succeeded!')
+                break
+        # if not sta_if.isconnected():
+        #     print('connecting to network...')
+        #     sta_if.active(True)
+        #     sta_if.connect(ssid, password)
+        #     while not sta_if.isconnected():
+        #         pass
+        # print('network config:', sta_if.ifconfig())
 
     def check_for_update_to_install_during_next_reboot(self, ssid, password):
         OTAUpdater.using_network(ssid, password)
@@ -117,6 +126,7 @@ class OTAUpdater:
     def get_latest_version(self):
         print(self.github_repo  + '/releases/latest')
         latest_release = self.http_client.get(self.github_repo + '/releases/latest')
+        print(latest_release.json())
         version = latest_release.json()['tag_name']
         latest_release.close()
         return version
