@@ -42,8 +42,8 @@ def start(my_ota_updater):
     timestamp = time.time()
 
     while True:
-        # Turn the light green
-        pycom.rgbled(0x001100)
+        # Turn the light red
+        pycom.rgbled(0x110000)
 
         # s.setblocking(True)
         # s.settimeout(10)
