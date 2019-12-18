@@ -1,6 +1,4 @@
 import os
-print(os.getcwd())
-print(os.listdir())
 
 import main.ota_updater as ota_updater
 from main.config import GITHUB_URL, WIFI_SSID, WIFI_PW, UPDATE_CHECK_DELAY
@@ -47,7 +45,7 @@ def start(my_ota_updater):
 
     while True:
         # Turn the light green
-        pycom.rgbled(0x001100)
+        # pycom.rgbled(0x001100)
 
         # s.setblocking(True)
         # s.settimeout(10)
@@ -80,11 +78,12 @@ def start(my_ota_updater):
             my_ota_updater.check_for_update_to_install_during_next_reboot(WIFI_SSID, WIFI_PW)
             print("if 2")
             timestamp = time.time()
-            print("if 3")
+
 
         # s.setblocking(False)
         print("sleep")
         time.sleep (10)
+
 
 def boot():
     my_ota_updater = ota_updater.OTAUpdater(GITHUB_URL, main_dir="main")

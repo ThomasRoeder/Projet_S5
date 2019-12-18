@@ -65,7 +65,7 @@ class OTAUpdater:
             print('No new updates found...')
 
     def _download_and_install_update(self, latest_version, ssid, password):
-        OTAUpdater.using_network(ssid, password)
+        # OTAUpdater.using_network(ssid, password)
         print("connected to network, downloading from ", self.github_repo + '/contents/' + self.main_dir)
         self.download_all_files(self.github_repo + '/contents/' + self.main_dir, latest_version)
         # os.rename(self.modulepath(self.main_dir), self.modulepath('old'))
@@ -117,9 +117,6 @@ class OTAUpdater:
         os.rmdir(directory)
 
     def get_version(self, directory, version_file_name='version.py'):
-        print(directory)
-        print(os.listdir())
-        print(os.listdir(directory))
         print("file : ", directory + '/' + version_file_name)
         if version_file_name in os.listdir(directory):
             f = open(directory + '/' + version_file_name)
@@ -210,6 +207,7 @@ class Response:
         return ujson.loads(self.content)
 
 
+
 class HttpClient:
 
     def request(self, method, url, data=None, json=None, headers={}, stream=None):
@@ -230,8 +228,12 @@ class HttpClient:
             host, port = host.split(':', 1)
             port = int(port)
 
+        print("host : ", host, " ; port : ", port)
+
         ai = usocket.getaddrinfo(host, port) #, 0, usocket.SOCK_STREAM)
+        print("ai : ", ai)
         ai = ai[0]
+        print("ai[0] : ", ai)
 
         s = usocket.socket(ai[0], ai[1], ai[2])
         try:
