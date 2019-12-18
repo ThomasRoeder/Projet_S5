@@ -7,7 +7,8 @@ pycom.heartbeat(False)
 print("booting")
 if "next" in os.listdir() :
     print("Installing updates")
-    os.rename("main", "old2")
+    os.rename("main", "old")
+    os.rename("next/.version_on_reboot", "next/version.py")
     os.rename("next", "main")
 
 print("launching")

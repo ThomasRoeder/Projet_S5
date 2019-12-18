@@ -55,6 +55,7 @@ class OTAUpdater:
             self.download_and_install_update_if_available(ssid, password)
             print("after download")
 
+
     def download_and_install_update_if_available(self, ssid, password):
         if 'next' in os.listdir(".."):
             if '.version_on_reboot' in os.listdir(self.modulepath('next')):
@@ -173,6 +174,7 @@ class OTAUpdater:
 
     def modulepath(self, path):
         return self.module + '/' + path if self.module else path
+
 
 
 class Response:

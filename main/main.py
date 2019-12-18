@@ -79,7 +79,6 @@ def start(my_ota_updater):
             print("if 2")
             timestamp = time.time()
 
-
         # s.setblocking(False)
         print("sleep")
         time.sleep (10)
