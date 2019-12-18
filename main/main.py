@@ -14,9 +14,10 @@ def start(my_ota_updater):
     import binascii
     import pycom
 
-    # Turn the light blue
+
+    # Turn the light red
     pycom.heartbeat(False)
-    pycom.rgbled(0x000011)
+    pycom.rgbled(0x110000)
 
     # Initialise LoRa in LORAWAN mode.
     lora = LoRa(mode=LoRa.LORAWAN)

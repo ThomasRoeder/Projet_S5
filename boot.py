@@ -15,4 +15,4 @@ print("launching")
 print("cwd : ", os.getcwd())
 print("listdir : ", os.listdir())
 from main import main
-print("success")
+print("bad")
