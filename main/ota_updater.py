@@ -12,7 +12,7 @@ class OTAUpdater:
 
     def __init__(self, github_repo, module='', main_dir='main'):
         self.http_client = HttpClient()
-        self.github_repo = github_repo.rstrip('/').replace('https://github.com', 'https://api.github.com/repos')
+        self.github_repo = github_repo.rstrip('/').replace('https://github.com',  'https://api.github.com/repos')
         self.main_dir = main_dir
         self.module = module.rstrip('/')
 
@@ -125,8 +125,14 @@ class OTAUpdater:
 
     def get_latest_version(self):
         print(self.github_repo  + '/releases/latest')
+        my_repo = self.http_client.get(self.github_repo)
+        print("repo : ", my_repo.json())
+        my_releases = self.http_client.get("https://api.github.com/repos/ThomasRoeder/Projet_S5/releases")
+        print("releases : ", my_releases.json())
+        my_tags = self.http_client.get("https://api.github.com/repos/ThomasRoeder/Projet_S5/tags")
+        print("tags : ", my_tags.json())
         latest_release = self.http_client.get(self.github_repo + '/releases/latest')
-        print(latest_release.json())
+        print("latest release message : ", latest_release.json())
         version = latest_release.json()['tag_name']
         latest_release.close()
         return version
