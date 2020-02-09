@@ -69,7 +69,7 @@ def start(my_ota_updater):
         #     "pres", b, "hPa [delta", ob - br, "]" )
         ob = br
         # for testing new code, remove try/except
-        message_to_send = "Temp : " + str(a) + "°C - Hum : " + str(c) + "%" # - Pres : " + str(b) + "hPa"
+        message_to_send = "Temp : " + str(a) + "°C - Hum : " + str(c) + "% - Pres : " + str(b) + "hPa"
         print(message_to_send)
         try:
             # send the data from the sensor
