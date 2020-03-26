@@ -1,7 +1,6 @@
 # 1000 x dank aan Evelien die mijn in deze tijden gesteund heeft
 # ohja, en er is ook nog tante suker (Jana Dej.) die graag kinderen wilt maar het zelf nog niet beseft
 
-
 import usocket
 import os
 import gc
@@ -37,23 +36,25 @@ class OTAUpdater:
         # print('network config:', sta_if.ifconfig())
 
     def check_for_update_to_install_during_next_reboot(self, ssid, password):
-        OTAUpdater.using_network(ssid, password)
-        current_version = self.get_version(self.modulepath(self.main_dir))
-        print("current_version : ", current_version)
-        latest_version = self.get_latest_version()
+        try:
+            OTAUpdater.using_network(ssid, password)
+            current_version = self.get_version(self.modulepath(self.main_dir))
+            latest_version = self.get_latest_version()
 
-        print('Checking version... ')
-        print('\tCurrent version: ', current_version)
-        print('\tLatest version: ', latest_version)
-        if latest_version > current_version:
-            print('New version available, will download now and install on next reboot')
-            os.mkdir(self.modulepath('next'))
-            with open(self.modulepath('next/.version_on_reboot'), 'w') as versionfile:
-                versionfile.write(latest_version)
-                versionfile.close()
-            print("before download")
-            self.download_and_install_update_if_available(ssid, password)
-            print("after download")
+            print('Checking version... ')
+            print('\tCurrent version: ', current_version)
+            print('\tLatest version: ', latest_version)
+            if latest_version > current_version:
+                print('New version available, will download now and reboot')
+                os.mkdir(self.modulepath('next'))
+                with open(self.modulepath('next/.version_on_reboot'), 'w') as versionfile:
+                    versionfile.write(latest_version)
+                    versionfile.close()
+                print("before download")
+                self.download_and_install_update_if_available(ssid, password)
+                print("after download")
+        except:
+            print("Network not found, try again in next loop")
 
     def download_and_install_update_if_available(self, ssid, password):
         if 'next' in os.listdir(".."):
@@ -71,8 +72,8 @@ class OTAUpdater:
         # os.rename(self.modulepath(self.main_dir), self.modulepath('old'))
         # os.rename(self.modulepath('next/.version_on_reboot'), self.modulepath('next/.version'))
         # os.rename(self.modulepath('next'), self.modulepath(self.main_dir))
-        print('Update downloaded (', latest_version, '), will install on next reboot')
-        # machine.reset()
+        print('Update downloaded (', latest_version, '), will reboot')
+        machine.reset()
 
     def apply_pending_updates_if_available(self):
         if 'next' in os.listdir(".."):

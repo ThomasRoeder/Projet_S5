@@ -1,9 +1,16 @@
 import os
+import json
 import main.ota_updater as ota_updater
 from main.config import GITHUB_URL, WIFI_SSID, WIFI_PW, UPDATE_ORDER
 import main.data_sensor as data_sensor
 from machine import I2C
 import time
+
+ # definition of global variable VERSION
+f = open("main/version.py")
+VERSION = f.read()
+f.close()
+print("version : ", VERSION)
 
 def download_and_install_update_if_available(my_ota_updater):
     my_ota_updater.download_and_install_update_if_available(WIFI_SSID, WIFI_PW)
@@ -18,7 +25,6 @@ def start(my_ota_updater):
     # Turn the light red # blue
     pycom.heartbeat(False)
     pycom.rgbled(0x110000) # 0x000011
-
 
     # Initialise LoRa in LORAWAN mode.
     lora = LoRa(mode=LoRa.LORAWAN)
@@ -69,7 +75,9 @@ def start(my_ota_updater):
         #     "pres", b, "hPa [delta", ob - br, "]" )
         ob = br
         # for testing new code, remove try/except
-        message_to_send = "Temp : " + str(a) + "°C - Hum : " + str(c) + "% - Pres : " + str(b) + "hPa"
+        #message_to_send = "Temp : " + str(a) + "°C - Hum : " + str(c) + "%" # - Pres : " + str(b) + "hPa"
+        message_to_send = {"temperature" : str(a), "humidity" : str(c), "pressure" : str(b)}
+        message_to_send = json.dumps(message_to_send)
         print(message_to_send)
         try:
             # send the data from the sensor
@@ -94,17 +102,18 @@ def start(my_ota_updater):
         print("pre if")
         if data_received :
             data_received = str(data_received)[2:-1]
-            print(data_received)
-            if data_received == UPDATE_ORDER :
+            print("data received : ", data_received, " type : ", type(data_received))
+            data_dict = json.loads(data_received)
+            print(data_dict)
+            if data_dict["version"] > VERSION :
                 print("if before")
                 my_ota_updater.check_for_update_to_install_during_next_reboot(WIFI_SSID, WIFI_PW)
                 # turn wifi off
                 print("if after")
 
-
         # s.setblocking(False)
         print("sleep")
-        time.sleep (10)
+        time.sleep (5)
 
 
 def boot():
